@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="../js/echarts.js"></script>
+    <script type="text/javascript" src="../js/socket.io.min.js"></script>
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 600px;height:400px;"></div>
+
+   
+
+    <!-- <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        function randomData() {
+            now = new Date(+now + oneDay);
+            value = value + Math.random() * 21 - 10;
+            return {
+                name: now.toString(),
+                value: [
+                    [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+                    Math.round(value)
+                ]
+            }
+        }
+
+        var data = [];
+        var now = +new Date(1997, 9, 3);
+        var oneDay = 24 * 3600 * 1000;
+        var value = Math.random() * 1000;
+        for (var i = 0; i < 1000; i++) {
+            data.push(randomData());
+        }
+
+        var option = {
+            title: {
+                text: '动态数据 + 时间坐标轴'
+            },
+            
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) {
+                    params = params[0];
+                    var date = new Date(params.name);
+                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+                },
+                axisPointer: {
+                    animation: false
+                }
+            },
+            xAxis: {
+                type: 'time',
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: false
+                }
+            },
+            series: [{
+                name: '模拟数据',
+                type: 'line',
+                showSymbol: false,
+                hoverAnimation: false,
+                data: data
+            }]
+        };
+
+        setInterval(function () {
+
+            for (var i = 0; i < 5; i++) {
+                data.shift();
+                data.push(randomData());
+            }
+
+            myChart.setOption({
+                series: [{
+                    data: data
+                }]
+            });
+        }, 1000);
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        // // 指定图表的配置项和数据
+        // var option = {
+        //     title: {
+        //         text: 'ECharts 入门示例'
+        //     },
+        //     tooltip: {},
+        //     legend: {
+        //         data:['销量']
+        //     },
+        //     xAxis: {
+        //         data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+        //     },
+        //     yAxis: {},
+        //     series: [{
+        //         name: '销量',
+        //         type: 'bar',
+        //         data: [5, 20, 36, 10, 10, 20]
+        //     }]
+        // };
+
+        // // 使用刚指定的配置项和数据显示图表。
+        // myChart.setOption(option);
+    </script> -->
+</body>
+
+
+<script type="text/javascript" charset="utf-8">
+    var myChart = echarts.init(document.getElementById('main'));
+    var socket = io.connect('http://127.0.0.1:5000');
+
+    socket.emit('message', {'data': 'connecting!'});
+
+    socket.on('response', function(data) {
+        // alert(data["response"]);
+        option = {
+            tooltip : {
+                formatter: "{a} <br/>{b} : {c}%"
+            },
+            // toolbox: {
+            //     feature: {
+            //         restore: {},
+            //         saveAsImage: {}
+            //     }
+            // },
+            series: [
+                {
+                    name: '业务指标',
+                    type: 'gauge',
+                    detail: {formatter:'{value}%'},
+                    data: [{value:data["response"][0] , name: '完成率'}],
+                    max:200,
+                    min:10
+                }
+            ]
+        };
+
+        myChart.setOption(option);
+
+        socket.emit('message', {'data': 'connected!'});
+
+    });
+</script>
+</html>
