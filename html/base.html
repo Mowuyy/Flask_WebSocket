@@ -126,6 +126,7 @@
 
     socket.on('response', function(data) {
         // alert(data["response"]);
+		console.log("haha...")
         option = {
             tooltip : {
                 formatter: "{a} <br/>{b} : {c}%"
@@ -150,7 +151,7 @@
 
         myChart.setOption(option);
 
-        socket.emit('message', {'data': 'connected!'});
+        // socket.emit('message', {'data': 'connected!'});
 
     });
 </script>
